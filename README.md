@@ -1,4 +1,4 @@
 # Init 
 
 - Install Docker
-- docker compose build && docker compose up# CICDProject
+- docker compose build && docker compose up

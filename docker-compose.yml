@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  database:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+  backend:
+    build: be/.
+    restart: always
+    environment:
+      FLASK_ENV: development
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./be:/app
+    depends_on:
+      - database
+  frontend:
+    build: fe/.
+    restart: always
+    environment:
+      FLASK_ENV: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./fe:/app
+
+

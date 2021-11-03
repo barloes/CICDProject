@@ -51,5 +51,30 @@ def select_query(query, data=()):
     return [()]
 
 
+def select_query(query, data=()):
+    try:
+        # commit is False if you are not inserting query
+
+        cnx = mysql.connector.connect(**config)
+        cursor = cnx.cursor(buffered=True)
+        app.logger.info(f"query: {query%data}")
+        cursor.execute(query, data)
+
+        response = cursor.fetchall()
+        app.logger.info(f"response: {response}")
+
+        cursor.close()
+        cnx.close()
+        return response
+    except Exception as e:
+        app.logger.exception(e)
+    return [()]
+
+@app.route("/login", methods=["POST"])
+def login():
+    app.logger.info(request.form)
+    return {"token":"test123"}
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

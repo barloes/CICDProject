@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import './Login.css';
+import './Signup.css';
 
-export default function Login({ setToken }) {
+async function loginUser(credentials) {
+  return fetch('http://localhost:5000/signup', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(credentials)
+  })
+    .then(data => data.json())
+ }
+
+export default function Signup({ setToken }) {
   const [username, setUserName] = useState();
   const [password, setPassword] = useState();
-
-  async function loginUser(credentials) {
-    return fetch('/login', {
-      method: 'POST',
-      body: JSON.stringify(credentials)
-    })
-      .then(data => data.json())
-  }
-  
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -26,8 +28,8 @@ export default function Login({ setToken }) {
   }
 
   return(
-    <div className="login-wrapper">
-      <h1>Login</h1>
+    <div className="signup-wrapper">
+      <h1>Signup</h1>
       <form onSubmit={handleSubmit}>
         <label>
           <p>Username</p>
@@ -47,6 +49,6 @@ export default function Login({ setToken }) {
 
 
 
-Login.propTypes = {
+Signup.propTypes = {
   setToken: PropTypes.func.isRequired
 };

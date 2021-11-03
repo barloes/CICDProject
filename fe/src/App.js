@@ -23,6 +23,7 @@ function App() {
   }
   return (
     <div className="wrapper">
+
       <h1>Application</h1>
       <BrowserRouter>
         <Switch>
@@ -33,6 +34,7 @@ function App() {
             <Preferences />
           </Route>
         </Switch>
+
       </BrowserRouter>
     </div>
   );

@@ -3,18 +3,20 @@ import PropTypes from 'prop-types';
 
 import './Login.css';
 
+async function loginUser(credentials) {
+  return fetch('/auth', {
+    headers: {
+      'Content-Type': 'application/json'
+   },
+    method: 'POST',
+    body: JSON.stringify(credentials)
+  })
+    .then(data => data.json())
+}
+
 export default function Login({ setToken }) {
   const [username, setUserName] = useState();
-  const [password, setPassword] = useState();
-
-  async function loginUser(credentials) {
-    return fetch('/login', {
-      method: 'POST',
-      body: JSON.stringify(credentials)
-    })
-      .then(data => data.json())
-  }
-  
+  const [password, setPassword] = useState();  
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -22,6 +24,7 @@ export default function Login({ setToken }) {
       username,
       password
     });
+
     setToken(token);
   }
 
@@ -44,8 +47,6 @@ export default function Login({ setToken }) {
     </div>
   )
 }
-
-
 
 Login.propTypes = {
   setToken: PropTypes.func.isRequired

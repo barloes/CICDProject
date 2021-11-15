@@ -22,12 +22,12 @@ services:
       - ./be:/app
     depends_on:
       - database
-  frontend:
-    build: fe/.
-    restart: always
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./fe:/app
+  # frontend:
+  #   build: fe/.
+  #   restart: always
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./fe:/app
 
 

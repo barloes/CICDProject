@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import "./App.css";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Login from "./components/Login";
-import Dashboard from "./components/Dashboard";
-import Preferences from "./components/Preferences";
 import useToken from "./components/useToken";
-import { Navbar } from "react-bootstrap";
+import Homepage from "./components/Homepage";
+
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+
+import Dashboard from "./components/Dashboard";
+import Deploy from "./components/Deploy";
+import Recommendation from "./components/Recommendation";
+import NavbarComponent from "./components/NavbarComponent";
 
 function App() {
   const { token, setToken } = useToken();
@@ -15,18 +19,23 @@ function App() {
   }
 
   return (
-    <div className="wrapper">
-      <BrowserRouter>
+    <Router>
+      <div className="wrapper">
+        <NavbarComponent />
+
         <Switch>
+          <Route path="/recommendation">
+            <Recommendation />
+          </Route>
+          <Route path="/deploy">
+            <Deploy />
+          </Route>
           <Route path="/dashboard">
             <Dashboard />
           </Route>
-          <Route path="/preferences">
-            <Preferences />
-          </Route>
         </Switch>
-      </BrowserRouter>
-    </div>
+      </div>
+    </Router>
   );
 }
 

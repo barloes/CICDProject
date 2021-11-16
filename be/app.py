@@ -5,11 +5,14 @@ import mysql.connector
 import boto3
 from flask_cors import CORS
 from flask_jwt import JWT, jwt_required, current_identity
+from datetime import timedelta
 
 app = Flask(__name__)
 CORS(app)
 app.secret_key = "super secret key"
 app.debug = True
+app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this!
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=7)
 
 
 config = {
@@ -66,23 +69,11 @@ def identity(payload):
 
 jwt = JWT(app, authenticate, identity)
 
-@app.route('/test', methods=["POST"])
+@app.route('/test', methods=["GET"])
+@jwt_required()
 def test():
-    data = request.json
-    username = data['username']
-    password = data['password']
-
-    query = "select username from User where username=%s and password=%s"
-    data = (username,password)
-
-    res = select_query(query, data)
-    if len(res) > 0: 
-        return res[0][0]
-    else:
-        return Response(
-        "User not found",
-        status=400,
-    )
+    list = [{"name":"a","status":"s1","link":"l1"},{"name":"b","status":"s2","link":"l2"}]
+    return jsonify(results = list)
 
 @app.route('/protected', methods=["POST"])
 @jwt_required()

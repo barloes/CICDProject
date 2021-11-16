@@ -23,8 +23,7 @@ export default function Login({ setToken }) {
       username,
       password,
     });
-
-    setToken(token);
+    if ("access_token" in token) setToken(token);
   };
 
   return (
@@ -35,6 +34,7 @@ export default function Login({ setToken }) {
           <p>Username</p>
           <input type="text" onChange={(e) => setUserName(e.target.value)} />
         </label>
+        <br />
         <label>
           <p>Password</p>
           <input

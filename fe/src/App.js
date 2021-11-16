@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import "./App.css";
 import Login from "./components/Login";
 import useToken from "./components/useToken";
-import Homepage from "./components/Homepage";
 
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
@@ -30,7 +29,7 @@ function App() {
           <Route path="/deploy">
             <Deploy />
           </Route>
-          <Route path="/dashboard">
+          <Route path="/">
             <Dashboard />
           </Route>
         </Switch>

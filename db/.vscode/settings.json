@@ -1,0 +1,5 @@
+{
+  "editor.defaultFormatter": "mtxr.sqltools",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+}

@@ -4,7 +4,7 @@ from datetime import datetime
 import mysql.connector
 import boto3
 from flask_cors import CORS
-from flask_jwt import JWT, jwt_required, current_identity
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
 from datetime import timedelta
 
 app = Flask(__name__)
@@ -23,62 +23,49 @@ config = {
     "raise_on_warnings": True,
 }
 
-class Object(object):
-    pass
-
-def getUserIdWithUsername(username):
-    query = "select userId from User where username=%s"
-    data = (username,)
-    res = select_query(query, data)
-
-    if len(res) > 0: 
-        user = Object()
-        user.id = res[0][0]
-        return res[0][0]
-    else:
-        return None
-        
-def authenticate(username, password):
+def authenticated(username, password):
     query = "select username from User where username=%s and password=%s"
     data = (username,password)
     app.logger.info(f"data:{data}")
     res = select_query(query, data)
-    if len(res) > 0: 
-        user = Object()
-        user.id = getUserIdWithUsername(username)
-        user.username = username
-        user.password = password
-        return user
+
+    app.logger.info(f"length: {len(res)}")
+    if len(res) == 1: 
+        return True
     else:
-        return None
+        return False
 
-def identity(payload):
-    userId = payload['identity']
-    app.logger.debug(f"userId {userId}")
+def convertResToJsonList(nameList, responses):
+    result = list()
+    for res in responses:
+        d = dict()
+        for count,value in enumerate(res):
+            d[nameList[count]] = value
+    
+        result.append(d)
+    return result
 
-    query = "select userId from User where userId=%s"
-    data = (userId,)
-    res = select_query(query, data)
-
-    if len(res) > 0: 
-        user = Object()
-        user.id = res[0][0]
-        return res[0][0]
-    else:
-        return None
-
-jwt = JWT(app, authenticate, identity)
+jwt = JWTManager(app)
 
 @app.route('/test', methods=["GET"])
 @jwt_required()
 def test():
-    list = [{"name":"a","status":"s1","link":"l1"},{"name":"b","status":"s2","link":"l2"}]
-    return jsonify(results = list)
+    app.logger.info(f"cur user: {get_jwt_identity()}")
+    username = get_jwt_identity()
+    
+    query = "select projectName,status,link from Project where username=%s"
+    data = (username,)
+    responses = select_query(query, data)
+    app.logger.info(f"responses: {str(responses)}")
+    
+    nameList = ['name','status','link']
+    result = convertResToJsonList(nameList,responses)
+    return jsonify(results = result)
 
-@app.route('/protected', methods=["POST"])
+@app.route('/protected', methods=["GET"])
 @jwt_required()
 def protected():
-    return '%s' % current_identity
+    return '%s' % get_jwt_identity()
 
 def insert_query(query, data=()):
     try:
@@ -96,8 +83,6 @@ def insert_query(query, data=()):
 
 def select_query(query, data=()):
     try:
-        # commit is False if you are not inserting query
-
         cnx = mysql.connector.connect(**config)
         cursor = cnx.cursor(buffered=True)
         app.logger.info(f"query: {query%data}")
@@ -115,8 +100,13 @@ def select_query(query, data=()):
 
 @app.route("/login", methods=["POST"])
 def login():
-    app.logger.info(request.form)
-    return {"token":"test123"}
+    username = request.json.get("username", None)
+    password = request.json.get("password", None)
+    if authenticated(username,password):
+        access_token = create_access_token(identity=username)
+        return jsonify(access_token=access_token)
+    else:
+        return jsonify({"msg": "Bad username or password"}), 401
 
 @app.route("/", methods=["GET"])
 def healthcheck():

@@ -1,56 +1,46 @@
 import React, { useEffect, useState } from "react";
-import { Table, Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Tabs, Tab } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.css";
-
-async function getData() {
-  let token = JSON.parse(sessionStorage.getItem("token"));
-  console.log(token);
-  return fetch("/test", {
-    method: "GET",
-    headers: { Authorization: `JWT ${token.access_token}` },
-  }).then((data) => data.json());
-}
+import AddProject from "./AddProject";
+import ListProject from "./ListProject";
 
 export default function Dashboard() {
-  const [data, setData] = useState([]);
+  const [showHide, setShowData] = useState(false);
 
-  useEffect(() => {
-    let mounted = true;
-    getData().then((items) => {
-      if ("results" in items) {
-        setData(items.results);
-      }
-    });
-    return () => (mounted = false);
-  }, []);
-
-  console.log(data);
-
+  console.log("idk " + showHide);
   return (
     <div>
       <Container>
-        <Row>
-          <Col xs>
+        <Row className="justify-content-md-center">
+          <Col xs={6}>
             <br></br>
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setShowData(!showHide)}
+              >
+                Add Project
+              </Button>{" "}
+            </div>
+            <AddProject showHide={showHide} setShowData={setShowData} />
+            <br></br>
+            <Card>
+              <Tabs
+                defaultActiveKey="Project"
+                id="uncontrolled-tab-example"
+                className="mb-3"
+              >
+                <Tab eventKey="Project" title="Project">
+                  <br></br>
+
+                  <ListProject />
+                </Tab>
+              </Tabs>
+
+              <br></br>
+            </Card>
           </Col>
-          <Table striped bordered hover size="sm">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Status</th>
-                <th>Link</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((item) => (
-                <tr key={item.name}>
-                  <td>{item.name}</td>
-                  <td>{item.status}</td>
-                  <td>{item.link}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
         </Row>
       </Container>
     </div>

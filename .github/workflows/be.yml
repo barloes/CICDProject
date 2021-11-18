@@ -3,7 +3,7 @@ on: push
 jobs:
   deploy:
     name: Deploy be
-    runs-on: ubuntu-18.04
+    runs-on: docker:19.03.12-dind
   
     steps:
     - name: Configure AWS credentials

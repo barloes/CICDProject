@@ -48,8 +48,28 @@ def convertResToJsonList(nameList, responses):
 jwt = JWTManager(app)
 
 @app.route('/test', methods=["GET"])
-@jwt_required()
 def test():
+    app.logger.info(request.json)
+
+    ecr = boto3.client('ecr')
+    name = "test"
+    response = ecr.delete_repository(
+        repositoryName=name,
+        force=True
+    )
+    app.logger.info(response)
+    # projectName = request.json.get("projectName", None)
+    
+    # query = "DELETE FROM Project where projectName=%s and username=%s;" 
+    # data = (projectName,get_jwt_identity())
+    try:
+        return jsonify({"status":200})
+    except Exception as e:
+        return jsonify({"msg": "Bad Request","status": 401})
+
+@app.route('/project', methods=["GET"])
+@jwt_required()
+def list_projects():
     app.logger.info(f"cur user: {get_jwt_identity()}")
     username = get_jwt_identity()
     
@@ -61,6 +81,58 @@ def test():
     nameList = ['name','status','link']
     result = convertResToJsonList(nameList,responses)
     return jsonify(results = result)
+
+# add project
+@app.route('/project', methods=["POST"])
+@jwt_required()
+def add_project():
+    app.logger.info(f"cur user: {get_jwt_identity()}")
+    app.logger.info(request.json)
+    projectName = request.json.get("projectName", None)
+    
+    query = "INSERT INTO Project (projectName, status, username) VALUES (%s, 'Clean', %s );"
+    data = (projectName,get_jwt_identity())
+    try:
+        insert_query(query, data)
+
+        ecr = boto3.client('ecr')
+        response = ecr.create_repository(
+            repositoryName = projectName,
+
+            imageTagMutability='MUTABLE',
+            imageScanningConfiguration={
+                'scanOnPush': False
+            },
+        )
+        app.logger.info(f"Response from creating ecr: {response}")
+
+        return jsonify({"status":200})
+    except Exception as e:
+        return jsonify({"msg": "Bad Request","status": 401})
+
+# remove project
+@app.route('/project', methods=["DELETE"])
+@jwt_required()
+def remove_project():
+    app.logger.info(f"cur user: {get_jwt_identity()}")
+    app.logger.info(request.json)
+    projectName = request.json.get("projectName", None)
+    
+    query = "DELETE FROM Project where projectName=%s and username=%s;" 
+    data = (projectName,get_jwt_identity())
+    try:
+        insert_query(query, data)
+
+        ecr = boto3.client('ecr')
+        response = ecr.delete_repository(
+            repositoryName=projectName,
+            force=True
+        )
+        app.logger.info(f"Response from deleting ecr: {response}")
+
+        return jsonify({"status":200})
+    except Exception as e:
+        return jsonify({"msg": "Bad Request","status": 401})
 
 @app.route('/protected', methods=["GET"])
 @jwt_required()

@@ -1,21 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, ListGroup, CloseButton } from "react-bootstrap";
+import { Row, Col, ListGroup, CloseButton, Badge } from "react-bootstrap";
 
-async function getData() {
+async function listProjectAPI() {
   let token = JSON.parse(sessionStorage.getItem("token"));
-  return fetch("/test", {
+  const requestOptions = {
     method: "GET",
-    headers: { Authorization: `Bearer ${token.access_token}` },
-  }).then((data) => data.json());
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token.access_token}`,
+    },
+  };
+  return fetch("/project", requestOptions).then((data) => data.json());
 }
 
-async function removeItem() {
+async function removeProjectAPI(ProjectName) {
   let token = JSON.parse(sessionStorage.getItem("token"));
-  return fetch("/test", {
-    method: "GET",
-    headers: { Authorization: `Bearer ${token.access_token}` },
-    body: { test: "test" },
-  }).then((data) => data.json());
+  const requestOptions = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token.access_token}`,
+    },
+    body: JSON.stringify({ projectName: ProjectName }),
+  };
+
+  return fetch("/project", requestOptions).then((data) => data.json());
 }
 
 export default function ListProject() {
@@ -23,13 +32,14 @@ export default function ListProject() {
 
   useEffect(() => {
     let mounted = true;
-    getData().then((items) => {
+    listProjectAPI().then((items) => {
       setData(items?.results);
     });
     return () => (mounted = false);
   }, []);
 
   function handleRemove(name) {
+    removeProjectAPI(name);
     const newData = data.filter((item) => item.name !== name);
 
     setData(newData);
@@ -67,25 +77,34 @@ export default function ListProject() {
     }
   }
   return (
-    <Row className="justify-content-md-center">
-      <Col xs={8}>
-        {data.map((item) => (
-          <ListGroup as="ol" numbered key={item.name}>
-            <ListGroup.Item
-              as="li"
-              className="d-flex justify-content-between align-items-start"
-            >
-              <div className="ms-2 me-auto">
-                <div className="fw-bold">
-                  {item.name} {handleStatus(item.status)}
+    <div>
+      {data.map((item, index) => (
+        <Row className="justify-content-md-center" key={index}>
+          <Col xs={8}>
+            <ListGroup as="ol">
+              <ListGroup.Item
+                as="li"
+                className="d-flex justify-content-between align-items-start"
+              >
+                <div className="ms-2 me-auto">
+                  <div className="fw-bold">
+                    {index + 1}.{item.name}
+                  </div>
+                  {item.status}
                 </div>
-              </div>
+                {handleStatus(item.status)}
+              </ListGroup.Item>
+            </ListGroup>
+          </Col>
 
-              <CloseButton onClick={() => handleRemove(item.name)} />
-            </ListGroup.Item>
-          </ListGroup>
-        ))}
-      </Col>
-    </Row>
+          <Col xs={1}>
+            <CloseButton
+              style={{ display: "flex", justifyContent: "center" }}
+              onClick={() => handleRemove(item.name)}
+            />
+          </Col>
+        </Row>
+      ))}
+    </div>
   );
 }

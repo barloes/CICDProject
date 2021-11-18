@@ -7,7 +7,6 @@ import ListProject from "./ListProject";
 export default function Dashboard() {
   const [showHide, setShowData] = useState(false);
 
-  console.log("idk " + showHide);
   return (
     <div>
       <Container>

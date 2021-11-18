@@ -13,7 +13,8 @@ Create TABLE Project (
 );
 INSERT INTO User (username, password)
 VALUES ('test', 'test');
-INSERT INTO Project (projectName, status, username)
-VALUES ('p1', 'Clean', 'test');
-INSERT INTO Project (projectName, status, link, username)
-VALUES ('p2', 'Completed', 'l1', 'test');
+
+-- INSERT INTO Project (projectName, status, username)
+-- VALUES ('p1', 'Clean', 'test');
+-- INSERT INTO Project (projectName, status, link, username)
+-- VALUES ('p2', 'Complete', 'l1', 'test');

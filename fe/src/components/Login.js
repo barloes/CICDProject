@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import "./Login.css";
 
-async function loginUser(credentials) {
+async function loginUserAPI(credentials) {
   return fetch("/login", {
     headers: {
       "Content-Type": "application/json",
@@ -19,7 +19,7 @@ export default function Login({ setToken }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = await loginUser({
+    const token = await loginUserAPI({
       username,
       password,
     });

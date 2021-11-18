@@ -23,12 +23,13 @@ export default function AddProject({ showHide, setShowData }) {
     setShowData(!showHide);
   }
 
-  function onSubmit() {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     console.log(ProjectName);
     addProjectAPI(ProjectName);
     handleModalShowHide();
     window.location.reload(false);
-  }
+  };
 
   return (
     <Modal show={showHide}>
@@ -48,7 +49,7 @@ export default function AddProject({ showHide, setShowData }) {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="primary" onClick={(e) => onSubmit()}>
+        <Button variant="primary" onClick={handleSubmit}>
           Add Project
         </Button>
       </Modal.Footer>

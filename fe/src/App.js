@@ -7,7 +7,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import Dashboard from "./components/Dashboard";
 import Deploy from "./components/Deploy";
-import Recommendation from "./components/Recommendation";
+import Config from "./components/Config";
 import NavbarComponent from "./components/NavbarComponent";
 
 function App() {
@@ -23,8 +23,8 @@ function App() {
         <NavbarComponent />
 
         <Switch>
-          <Route path="/recommendation">
-            <Recommendation />
+          <Route path="/config">
+            <Config />
           </Route>
           <Route path="/deploy">
             <Deploy />

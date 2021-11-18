@@ -1,4 +1,14 @@
 import React, { useState } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+  Tabs,
+  Tab,
+  Form,
+} from "react-bootstrap";
 import PropTypes from "prop-types";
 
 import "./Login.css";
@@ -27,25 +37,49 @@ export default function Login({ setToken }) {
   };
 
   return (
-    <div className="login-wrapper">
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          <p>Username</p>
-          <input type="text" onChange={(e) => setUserName(e.target.value)} />
-        </label>
-        <br />
-        <label>
-          <p>Password</p>
-          <input
-            type="password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
-        <div>
-          <button type="submit">Submit</button>
-        </div>
-      </form>
+    <div>
+      <br></br>
+      <Row className="justify-content-md-center">
+        <Col xs={5}>
+          <Card>
+            <Card.Header as="h5" style={{ textAlign: "center" }}>
+              Login
+            </Card.Header>
+            <Row className="justify-content-md-center">
+              <Col xs={8}>
+                <br></br>
+                <Form onSubmit={handleSubmit}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Username</Form.Label>
+                    <Form.Control
+                      placeholder="Enter Username"
+                      onChange={(e) => setUserName(e.target.value)}
+                    />
+                  </Form.Group>
+
+                  <Form.Group className="mb-3" controlId="formBasicPassword">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
+                      type="password"
+                      placeholder="Password"
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </Form.Group>
+
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    style={{ float: "right" }}
+                  >
+                    Login
+                  </Button>
+                </Form>
+              </Col>
+            </Row>
+            <br></br>
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 }

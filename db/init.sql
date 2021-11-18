@@ -11,6 +11,15 @@ Create TABLE Project (
     PRIMARY KEY (projectName),
     FOREIGN KEY (username) REFERENCES User(username) ON DELETE CASCADE
 );
+
+Create TABLE Config (
+    language varchar(255) NOT NULL,
+    version varchar(255) NOT NULL,
+    docker varchar(65535) NOT NULL,
+    config varchar(65535) NOT NULL,
+    PRIMARY KEY (language,version),
+);
+
 INSERT INTO User (username, password)
 VALUES ('test', 'test');
 
@@ -18,3 +27,5 @@ VALUES ('test', 'test');
 -- VALUES ('p1', 'Clean', 'test');
 -- INSERT INTO Project (projectName, status, link, username)
 -- VALUES ('p2', 'Complete', 'l1', 'test');
+
+insert into Config (language,version,docker,config) values ('python','3.8','FROM python:3.8-slim-buster \n \nWORKDIR /app \nCOPY . /app \nRUN pip3 install -r requirements.txt \n \nCMD [ "python3","app.py" ]')

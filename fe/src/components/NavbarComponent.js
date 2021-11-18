@@ -22,7 +22,7 @@ export default function NavbarComponent() {
         <Navbar.Toggle aria-controls="navbar-dark-example" />
         <Navbar.Collapse id="navbar-dark-example">
           <Nav>
-            <Nav.Link href="/recommendation">Recommendation</Nav.Link>
+            <Nav.Link href="/config">Config</Nav.Link>
             <Nav.Link href="/deploy">Deploy</Nav.Link>
           </Nav>
         </Navbar.Collapse>

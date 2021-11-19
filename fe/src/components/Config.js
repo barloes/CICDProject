@@ -9,9 +9,10 @@ import {
   Tab,
   Form,
 } from "react-bootstrap";
+import ConfigModal from "./ConfigModal";
 import "bootstrap/dist/css/bootstrap.css";
 
-async function listLanguageApi() {
+async function listLanguagesApi() {
   let token = JSON.parse(sessionStorage.getItem("token"));
   const requestOptions = {
     method: "GET",
@@ -20,7 +21,21 @@ async function listLanguageApi() {
       Authorization: `Bearer ${token.access_token}`,
     },
   };
-  return fetch("/language", requestOptions).then((data) => data.json());
+  return fetch("/config", requestOptions).then((data) => data.json());
+}
+
+async function getVersionsApi(language) {
+  let token = JSON.parse(sessionStorage.getItem("token"));
+  const requestOptions = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token.access_token}`,
+    },
+  };
+  return fetch("/config/" + language, requestOptions).then((data) =>
+    data.json()
+  );
 }
 
 async function getConfigApi(language, version) {
@@ -32,17 +47,57 @@ async function getConfigApi(language, version) {
       Authorization: `Bearer ${token.access_token}`,
     },
   };
-  return fetch(
-    "/language/" + language.toLowerCase() + "/" + version,
-    requestOptions
-  ).then((data) => data.json());
+  return fetch("/config/" + language + "/" + version, requestOptions).then(
+    (data) => data.json()
+  );
+}
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 export default function Config() {
-  const [language, setLanguage] = useState();
-  const [version, setVersion] = useState();
+  const [languages, setLanguages] = useState([{ language: "python" }]);
+  const [versions, setVersions] = useState([]);
+
+  const [curLanguage, setCurLanguage] = useState("python");
+  const [curVersion, setCurVersion] = useState();
+
+  const [showHide, setShowData] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    listLanguagesApi().then((items) => {
+      setLanguages(items?.results);
+    });
+
+    getVersionsApi(languages[0].language).then((items) => {
+      setVersions(items?.results);
+      setCurVersion(items?.results[0].version);
+    });
+
+    return () => (mounted = false);
+  }, []);
+
+  const handleChange = async (e) => {
+    setCurLanguage(e.target.value);
+    getVersionsApi(e.target.value).then((data) => {
+      setVersions(data?.results);
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(curLanguage);
+    console.log(curVersion);
+
+    getConfigApi(curLanguage, curVersion).then((data) => {
+      console.log(data);
+    });
+
+    //need pass data down to the child component
+
+    setShowData(!showHide);
   };
 
   return (
@@ -62,32 +117,34 @@ export default function Config() {
 
                   <Row className="justify-content-md-center">
                     <Col xs={8}>
-                      <Form>
+                      <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="formBasicSelect">
                           <Form.Label>Select Language</Form.Label>
-                          <Form.Control
-                            as="select"
-                            value={language}
-                            onChange={(e) => {
-                              setLanguage(e.target.value);
-                            }}
-                          >
-                            <option value="DICTUM">Dictamen</option>
-                            <option value="CONSTANCY">Constancia</option>
-                            <option value="COMPLEMENT">Complemento</option>
+                          <Form.Control as="select" onChange={handleChange}>
+                            {languages.map((item) => {
+                              return (
+                                <option
+                                  value={item.language}
+                                  key={item.language}
+                                >
+                                  {capitalizeFirstLetter(item.language)}
+                                </option>
+                              );
+                            })}
                           </Form.Control>
                           <br></br>
                           <Form.Label>Select Version</Form.Label>
                           <Form.Control
                             as="select"
-                            value={version}
-                            onChange={(e) => {
-                              setVersion(e.target.value);
-                            }}
+                            onChange={(e) => setCurVersion(e.target.value)}
                           >
-                            <option value="DICTUM">Dictamen</option>
-                            <option value="CONSTANCY">Constancia</option>
-                            <option value="COMPLEMENT">Complemento</option>
+                            {versions.map((item) => {
+                              return (
+                                <option value={item.version} key={item.version}>
+                                  {capitalizeFirstLetter(item.version)}
+                                </option>
+                              );
+                            })}
                           </Form.Control>
                         </Form.Group>
                         <br></br>
@@ -98,6 +155,10 @@ export default function Config() {
                         >
                           Generate
                         </Button>
+                        <ConfigModal
+                          showHide={showHide}
+                          setShowData={setShowData}
+                        />
                       </Form>
                     </Col>
                   </Row>

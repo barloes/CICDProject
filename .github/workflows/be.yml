@@ -23,8 +23,15 @@ jobs:
     - name: Build, tag, and push image to Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: cicd_be
+        ECR_REPOSITORY: cicd-be
         IMAGE_TAG: latest
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./be
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+    - name: update fargate service with latest image AWS CLI
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        SERVICE: cicd-be
+      run: |
+        aws ecs update-service --cluster $SERVICE --service $SERVICE --task-definition $SERVICE --force-new-deployment

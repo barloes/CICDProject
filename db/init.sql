@@ -3,6 +3,7 @@ CREATE TABLE User (
     password varchar(255) NOT NULL,
     PRIMARY KEY (username)
 );
+
 Create TABLE Project (
     projectName varchar(255) NOT NULL,
     status ENUM('Clean', 'Pending', 'Complete'),
@@ -15,17 +16,12 @@ Create TABLE Project (
 Create TABLE Config (
     language varchar(255) NOT NULL,
     version varchar(255) NOT NULL,
-    docker varchar(65535) NOT NULL,
-    config varchar(65535) NOT NULL,
-    PRIMARY KEY (language,version),
+    docker TEXT NOT NULL,
+    config TEXT NOT NULL,
+    PRIMARY KEY (language,version)
 );
 
 INSERT INTO User (username, password)
 VALUES ('test', 'test');
 
--- INSERT INTO Project (projectName, status, username)
--- VALUES ('p1', 'Clean', 'test');
--- INSERT INTO Project (projectName, status, link, username)
--- VALUES ('p2', 'Complete', 'l1', 'test');
-
-insert into Config (language,version,docker,config) values ('python','3.8','FROM python:3.8-slim-buster \n \nWORKDIR /app \nCOPY . /app \nRUN pip3 install -r requirements.txt \n \nCMD [ "python3","app.py" ]')
+insert into Config (language,version,docker,config) values ('python','3.8','FROM python:3.8-slim-buster \n \nWORKDIR /app \nCOPY . /app \nRUN pip3 install -r requirements.txt \n \nCMD [ "python3","app.py" ]','test');

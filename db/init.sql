@@ -1,6 +1,8 @@
 CREATE TABLE User (
     username varchar(255) NOT NULL,
     password varchar(255) NOT NULL,
+    accessId varchar(255) NULL,
+    accessSecret varchar(255) NULL,
     PRIMARY KEY (username)
 );
 

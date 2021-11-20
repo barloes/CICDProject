@@ -16,3 +16,5 @@
 # Recommendation
 - users need to answer a series of questions
 - users will get back a completed CI / variables to be added to githuh workflow/ci.yml
+
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_execution_IAM_role.html

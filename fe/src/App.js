@@ -19,7 +19,7 @@ function App() {
 
   return (
     <Router>
-      <div className="wrapper">
+      <div className="wrapper" style={{ fontFamily: "Arial" }}>
         <NavbarComponent />
 
         <Switch>

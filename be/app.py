@@ -4,6 +4,7 @@ from datetime import datetime
 import mysql.connector
 import boto3
 from flask_cors import CORS
+import time
 from flask_jwt_extended import (
     JWTManager,
     jwt_required,
@@ -60,23 +61,75 @@ jwt = JWTManager(app)
 def test():
     app.logger.info(request.json)
     name = "cicd-be"
+
+    port = 5000
     response = boto3.client("ecs").create_cluster(
         clusterName=name,
     )
     app.logger.info(response)
 
+    ecr_uri = "642151248908.dkr.ecr.ap-southeast-1.amazonaws.com/cicd-be:latest"
+
+    #left figuring out the taskExecRoleArn
+    taskExecRoleArn = "arn:aws:iam::642151248908:role/ecsTaskExecutionRole"
+
+    subnet_id='subnet-0a3c1a7403bb56445' 
+    security_group_id='sg-0b99c167b2fa96bdd' 
+
+    cpu = 256
+    memory = 512
+    response = boto3.client("ecs").register_task_definition(
+        family=name,
+        executionRoleArn=taskExecRoleArn,
+        networkMode='awsvpc',
+        containerDefinitions=[
+            {
+                'name': name,
+                'image': ecr_uri,
+
+                'cpu': cpu,
+                'memory': memory ,
+                'portMappings': [
+                    {
+                        'containerPort': port,
+                        'hostPort': port,
+                        'protocol': 'tcp'
+                    },
+                ],
+
+                'disableNetworking': False,
+                'privileged': False,
+                'logConfiguration': {
+                    "logDriver": "awslogs",
+                    "options": {
+                        "awslogs-region": "ap-southeast-1",
+                        "awslogs-group": "cicd",
+                        "awslogs-stream-prefix": name
+                    }
+                },
+
+            },
+        ],
+        requiresCompatibilities=[
+            'FARGATE',
+        ],
+        cpu=str(cpu),
+        memory=str(memory),
+        runtimePlatform={
+            'cpuArchitecture': 'X86_64',
+            'operatingSystemFamily': 'LINUX'
+        }
+    )
+
+    app.logger.info(response)
+
+
+
     response = boto3.client("ecs").create_service(
         cluster=name,
         serviceName=name,
-        taskDefinition="string",
-        serviceRegistries=[
-            {
-                "registryArn": "string",
-                "port": 123,
-                "containerName": "string",
-                "containerPort": 123,
-            },
-        ],
+        taskDefinition=name,
+
         desiredCount=1,
         launchType="FARGATE",
         deploymentConfiguration={
@@ -85,23 +138,94 @@ def test():
         networkConfiguration={
             "awsvpcConfiguration": {
                 "subnets": [
-                    "string",
+                    subnet_id,
                 ],
                 "securityGroups": [
-                    "string",
+                    security_group_id,
                 ],
                 "assignPublicIp": "ENABLED",
             }
         },
-        healthCheckGracePeriodSeconds=2147483647,
         schedulingStrategy="REPLICA",
-        deploymentController={"type": "CODE_DEPLOY"},
-        enableExecuteCommand=True,
+        deploymentController={"type": "ECS"},
     )
+
+    app.logger.info(response)
 
     try:
         return jsonify({"status": 200})
     except Exception as e:
+        return jsonify({"msg": "Bad Request", "status": 401})
+
+
+@app.route("/clean", methods=["GET"])
+def clean():
+
+    name = "cicd-be"
+    # response = boto3.client("ecs").delete_service(
+    #     cluster=name,
+    #     service=name,
+    #     force=True
+    # )
+
+    # app.logger.info(response)
+    time.sleep(10)
+    response = boto3.client("ecs").delete_cluster(
+        cluster=name
+    )
+    app.logger.info(response)
+
+    app.logger.info(response)
+
+
+# get access key
+@app.route("/accesskey", methods=["GET"])
+@jwt_required()
+def get_access_key():
+    app.logger.info(f"cur user: {get_jwt_identity()}")
+    query = "SELECT accessId,accessSecret from User where username=%s;"
+    data = (get_jwt_identity(),)
+
+    try:
+        responses = select_query(query, data)
+        if responses == [(None, None)]:
+            # create user and get accessId and get accessSecret
+            app.logger.info("hi")
+
+            response = boto3.client("iam").create_user(
+                Path="/cicd/",
+                UserName=get_jwt_identity(),
+                PermissionsBoundary="arn:aws:iam::642151248908:policy/Fargate_Access",
+            )
+
+            response = boto3.client("iam").attach_user_policy(
+                UserName=get_jwt_identity(),
+                PolicyArn="arn:aws:iam::642151248908:policy/Fargate_Access",
+            )
+
+            response = boto3.client("iam").create_access_key(
+                UserName = get_jwt_identity()
+            )
+
+            app.logger.info(response)
+            accessId = response["AccessKey"]["AccessKeyId"]
+            accessSecret = response["AccessKey"]["SecretAccessKey"]
+
+            query = "UPDATE User SET accessId = %s, accessSecret = %s WHERE username=%s"
+            data = (accessId,accessSecret,get_jwt_identity(),)
+            insert_query(query, data)
+            app.logger.info(f"{accessId} {accessSecret}")
+            
+            query = "SELECT accessId,accessSecret from User where username=%s;"
+            data = (get_jwt_identity(),)
+            responses = select_query(query, data)
+
+        nameList = ["accessId", "accessSecret"]
+        results = convertResToJsonList(nameList, responses)
+
+        return jsonify(results=results[0])
+    except Exception as e:
+        app.logger.exception(e)
         return jsonify({"msg": "Bad Request", "status": 401})
 
 
@@ -136,12 +260,13 @@ def add_project():
     try:
         insert_query(query, data)
 
-        ecr = boto3.client("ecr")
-        response = ecr.create_repository(
+        response = boto3.client("ecr").create_repository(
             repositoryName=projectName,
             imageTagMutability="MUTABLE",
             imageScanningConfiguration={"scanOnPush": False},
         )
+
+        ecr_uri = response["repository"]["repositoryUri"]
         app.logger.info(f"Response from creating ecr: {response}")
 
         return jsonify({"status": 200})
@@ -206,22 +331,24 @@ def get_versions(language):
         app.logger.exception(e)
         return jsonify({"msg": "Bad Request", "status": 401})
 
+
 # get version
 @app.route("/config/<string:language>/<string:version>", methods=["GET"])
 @jwt_required()
-def getConfig(language,version):
+def getConfig(language, version):
     app.logger.info(f"cur user: {get_jwt_identity()}")
     query = "SELECT docker,config from Config where language=%s and version=%s;"
-    data = (language,version)
+    data = (language, version)
     try:
         responses = select_query(query, data)
-        nameList = ["docker","config"]
+        nameList = ["docker", "config"]
         results = convertResToJsonList(nameList, responses)
 
-        return jsonify(results=results)
+        return jsonify(results=results[0])
     except Exception as e:
         app.logger.exception(e)
         return jsonify({"msg": "Bad Request", "status": 401})
+
 
 @app.route("/protected", methods=["GET"])
 @jwt_required()
@@ -241,7 +368,6 @@ def insert_query(query, data=()):
     cnx.close()
 
 
-
 def select_query(query, data=()):
 
     cnx = mysql.connector.connect(**config)
@@ -255,7 +381,6 @@ def select_query(query, data=()):
     cursor.close()
     cnx.close()
     return response
-
 
 
 @app.route("/login", methods=["POST"])
@@ -273,6 +398,9 @@ def login():
 def healthcheck():
     return Response(status=200)
 
+@app.route("/hello", methods=["GET"])
+def helloWorld():
+    return jsonify({"msg": "HelloWorld"})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

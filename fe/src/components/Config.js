@@ -63,7 +63,8 @@ export default function Config() {
   const [curLanguage, setCurLanguage] = useState("python");
   const [curVersion, setCurVersion] = useState();
 
-  const [showHide, setShowData] = useState(false);
+  const [showHide, setShowHide] = useState(false);
+  const [configData, setConfigData] = useState();
 
   useEffect(() => {
     let mounted = true;
@@ -83,6 +84,7 @@ export default function Config() {
     setCurLanguage(e.target.value);
     getVersionsApi(e.target.value).then((data) => {
       setVersions(data?.results);
+      setCurVersion(data?.results[0].version);
     });
   };
 
@@ -92,12 +94,10 @@ export default function Config() {
     console.log(curVersion);
 
     getConfigApi(curLanguage, curVersion).then((data) => {
-      console.log(data);
+      setConfigData(data?.results);
     });
-
     //need pass data down to the child component
-
-    setShowData(!showHide);
+    setShowHide(!showHide);
   };
 
   return (
@@ -157,7 +157,8 @@ export default function Config() {
                         </Button>
                         <ConfigModal
                           showHide={showHide}
-                          setShowData={setShowData}
+                          setShowHide={setShowHide}
+                          configData={configData}
                         />
                       </Form>
                     </Col>

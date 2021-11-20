@@ -16,11 +16,11 @@ async function addProjectAPI(ProjectName) {
   return fetch("/project", requestOptions).then((data) => data.json());
 }
 
-export default function AddProject({ showHide, setShowData }) {
+export default function AddProject({ showHide, setShowHide }) {
   const [ProjectName, setProjectName] = useState();
 
   function handleModalShowHide() {
-    setShowData(!showHide);
+    setShowHide(!showHide);
   }
 
   const handleSubmit = async (e) => {

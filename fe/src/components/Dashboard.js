@@ -5,7 +5,7 @@ import AddProject from "./AddProject";
 import ListProject from "./ListProject";
 
 export default function Dashboard() {
-  const [showHide, setShowData] = useState(false);
+  const [showHide, setShowHide] = useState(false);
 
   return (
     <div>
@@ -17,12 +17,12 @@ export default function Dashboard() {
               <Button
                 variant="secondary"
                 size="sm"
-                onClick={() => setShowData(!showHide)}
+                onClick={() => setShowHide(!showHide)}
               >
                 Add Project
               </Button>{" "}
             </div>
-            <AddProject showHide={showHide} setShowData={setShowData} />
+            <AddProject showHide={showHide} setShowHide={setShowHide} />
             <br></br>
             <Card>
               <Tabs

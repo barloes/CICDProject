@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal, Form, Tabs, Tab } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.css";
 import Template from "./Template";
+import Test from "./Test";
 
-export default function ConfigModal({ showHide, setShowData }) {
+export default function ConfigModal({ showHide, setShowHide, configData }) {
   function handleModalShowHide() {
-    setShowData(!showHide);
+    setShowHide(!showHide);
   }
 
   return (
@@ -16,13 +17,13 @@ export default function ConfigModal({ showHide, setShowData }) {
       <Modal.Body>
         <Tabs transition={false} id="noanim-tab-example" className="mb-3">
           <Tab eventKey="config" title="Config">
-            <Template data="aaaaaaaaaaaaaaa" />
+            <Template data={configData?.config} />
           </Tab>
           <Tab eventKey="docker" title="Docker">
-            <Template data="bbbbbbbb" />
+            <Template data={configData?.docker} />
           </Tab>
           <Tab eventKey="accesskey" title="Access Key">
-            <Template data="ccccccccccccc" />
+            <Test />
           </Tab>
         </Tabs>
       </Modal.Body>

@@ -6,7 +6,7 @@ import useToken from "./components/useToken";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import Dashboard from "./components/Dashboard";
-import Deploy from "./components/Deploy";
+import Editor from "./components/Editor";
 import Config from "./components/Config";
 import NavbarComponent from "./components/NavbarComponent";
 
@@ -26,8 +26,8 @@ function App() {
           <Route path="/config">
             <Config />
           </Route>
-          <Route path="/deploy">
-            <Deploy />
+          <Route path="/editor">
+            <Editor />
           </Route>
           <Route path="/">
             <Dashboard />

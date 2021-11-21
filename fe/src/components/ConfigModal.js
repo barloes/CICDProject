@@ -4,7 +4,12 @@ import "bootstrap/dist/css/bootstrap.css";
 import Template from "./Template";
 import Test from "./Test";
 
-export default function ConfigModal({ showHide, setShowHide, configData }) {
+export default function ConfigModal({
+  showHide,
+  setShowHide,
+  configData,
+  projectName,
+}) {
   function handleModalShowHide() {
     setShowHide(!showHide);
   }
@@ -17,7 +22,12 @@ export default function ConfigModal({ showHide, setShowHide, configData }) {
       <Modal.Body>
         <Tabs transition={false} id="noanim-tab-example" className="mb-3">
           <Tab eventKey="config" title="Config">
-            <Template data={configData?.config} />
+            <Template
+              data={configData?.config.replaceAll(
+                "${{PROJECT_NAME}}",
+                projectName
+              )}
+            />
           </Tab>
           <Tab eventKey="docker" title="Docker">
             <Template data={configData?.docker} />

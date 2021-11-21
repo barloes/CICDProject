@@ -23,7 +23,7 @@ export default function NavbarComponent() {
         <Navbar.Collapse id="navbar-dark-example">
           <Nav>
             <Nav.Link href="/config">Config</Nav.Link>
-            <Nav.Link href="/deploy">Deploy</Nav.Link>
+            <Nav.Link href="/editor">Editor</Nav.Link>
           </Nav>
         </Navbar.Collapse>
 

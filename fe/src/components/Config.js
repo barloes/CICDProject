@@ -66,6 +66,8 @@ export default function Config() {
   const [showHide, setShowHide] = useState(false);
   const [configData, setConfigData] = useState();
 
+  const [projectName, setProjectName] = useState();
+
   useEffect(() => {
     let mounted = true;
     listLanguagesApi().then((items) => {
@@ -146,6 +148,12 @@ export default function Config() {
                               );
                             })}
                           </Form.Control>
+                          <br></br>
+                          <Form.Label>Project Name</Form.Label>
+                          <Form.Control
+                            onChange={(e) => setProjectName(e.target.value)}
+                            placeholder="Enter Project Name"
+                          />
                         </Form.Group>
                         <br></br>
                         <Button
@@ -159,6 +167,7 @@ export default function Config() {
                           showHide={showHide}
                           setShowHide={setShowHide}
                           configData={configData}
+                          projectName={projectName}
                         />
                       </Form>
                     </Col>

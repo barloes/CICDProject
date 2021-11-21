@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, ListGroup, CloseButton, Badge } from "react-bootstrap";
+import { Row, Col, ListGroup, CloseButton, Card} from "react-bootstrap";
 
 async function listProjectAPI() {
   let token = JSON.parse(sessionStorage.getItem("token"));
@@ -45,8 +45,8 @@ export default function ListProject() {
     setData(newData);
   }
 
-  function handleStatus(status) {
-    if (status != "Complete") {
+  function handleLink(link) {
+    if (!link) {
       return (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -90,9 +90,9 @@ export default function ListProject() {
                   <div className="fw-bold">
                     {index + 1}.{item.name}
                   </div>
-                  {item.status}
+                  <Card.Link href={"http://" + item.link}>{item.link}</Card.Link>
                 </div>
-                {handleStatus(item.status)}
+                {handleLink(item.link)}
               </ListGroup.Item>
             </ListGroup>
           </Col>

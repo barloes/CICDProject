@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.css";
 
-async function addProjectAPI(ProjectName) {
+async function addProjectAPI(ProjectName, Port) {
   let token = JSON.parse(sessionStorage.getItem("token"));
   const requestOptions = {
     method: "POST",
@@ -10,7 +10,7 @@ async function addProjectAPI(ProjectName) {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token.access_token}`,
     },
-    body: JSON.stringify({ projectName: ProjectName }),
+    body: JSON.stringify({ projectName: ProjectName, port: Port }),
   };
 
   return fetch("/project", requestOptions).then((data) => data.json());
@@ -18,6 +18,7 @@ async function addProjectAPI(ProjectName) {
 
 export default function AddProject({ showHide, setShowHide }) {
   const [ProjectName, setProjectName] = useState();
+  const [Port, setPort] = useState();
 
   function handleModalShowHide() {
     setShowHide(!showHide);
@@ -25,8 +26,8 @@ export default function AddProject({ showHide, setShowHide }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(ProjectName);
-    addProjectAPI(ProjectName);
+
+    addProjectAPI(ProjectName, Port);
     handleModalShowHide();
     window.location.reload(false);
   };
@@ -38,12 +39,18 @@ export default function AddProject({ showHide, setShowHide }) {
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group className="mb-3" controlId="formGroupEmail">
+          <Form.Group className="mb-3">
             <Form.Label>Project Name</Form.Label>
             <Form.Control
-              type="test"
               onChange={(e) => setProjectName(e.target.value)}
               placeholder="Enter Project Name"
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Port</Form.Label>
+            <Form.Control
+              onChange={(e) => setPort(e.target.value)}
+              placeholder="Enter Port Number"
             />
           </Form.Group>
         </Form>

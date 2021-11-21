@@ -1,24 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { MdContentCopy } from "react-icons/md";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Button,
-  Tabs,
-  Tab,
-  Form,
-} from "react-bootstrap";
+import { Card } from "react-bootstrap";
 
 function formatNewLine(text) {
-  const newText = text?.split("\n").map((str) => <div>{str}</div>);
-
-  return newText;
+  const newText = text?.split("/n").map(function (place, i) {
+    return <p key={i}>place</p>;
+  });
 }
 
 export default function Template({ data }) {
+  console.log(data);
   const [isCopied, setIsCopied] = useState(false);
 
   const onCopyText = () => {
@@ -37,7 +29,9 @@ export default function Template({ data }) {
           </CopyToClipboard>
         </Card.Header>
         <Card.Body style={{ fontSize: "13px", fontWeight: "450" }}>
-          <Card.Text>{formatNewLine(data)}</Card.Text>
+          <Card.Text>
+            <div style={{ whiteSpace: "pre-line" }}>{data}</div>
+          </Card.Text>
         </Card.Body>
       </Card>
     </div>

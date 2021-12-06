@@ -1,0 +1,21 @@
+.container-root {
+  border: 1px solid black;
+  padding: 5px;
+  margin: 5px;
+}
+
+.line {
+  position: relative;
+}
+
+.line::before {
+  content: attr(data-line-number);
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0.5;
+}
+
+.line-text {
+  margin-left: 2em;
+}

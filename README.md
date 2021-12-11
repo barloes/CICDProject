@@ -18,3 +18,23 @@
 - users will get back a completed CI / variables to be added to githuh workflow/ci.yml
 
 https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_execution_IAM_role.html
+
+# Editor
+- add the following text to the Editor, it has some error
+
+```
+language: java
+
+ jdk:
+    - openjdk7
+    - oraclejdk7
+
+after_success:
+   - mvn clean cobertura:cobertura
+   - mvn test
+
+notifications:
+   email:
+       recipients:
+          - mymail@gmail.com
+```

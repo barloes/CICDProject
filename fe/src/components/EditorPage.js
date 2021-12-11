@@ -85,7 +85,7 @@ export default function EditorPage() {
                 id="uncontrolled-tab-example"
                 className="mb-3"
               >
-                <Tab eventKey="Editor" title="Yaml">
+                <Tab eventKey="Yaml" title="Yaml">
                   <Row className="justify-content-md-center">
                     <Col xs={10}>
                       {isError ? (

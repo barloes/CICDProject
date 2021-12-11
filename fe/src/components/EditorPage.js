@@ -1,6 +1,15 @@
 import React, { useState } from "react";
-import { Editor, EditorState, EditorBlock } from "draft-js";
-import { Container, Row, Col, Card, Button, Tabs, Tab } from "react-bootstrap";
+import { Editor, EditorState, EditorBlock, convertToRaw } from "draft-js";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+  Tabs,
+  Tab,
+  Alert,
+} from "react-bootstrap";
 
 const yamlLint = require("yaml-lint");
 import "./EditorPage.css";
@@ -31,6 +40,38 @@ export default function EditorPage() {
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
+  const [isError, setIsError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const blocks = convertToRaw(editorState.getCurrentContent()).blocks;
+  const mappedBlocks = blocks.map(
+    (block) => (!block.text.trim() && "\n") || block.text
+  );
+
+  let newText = "";
+  for (let i = 0; i < mappedBlocks.length; i++) {
+    const block = mappedBlocks[i];
+
+    // handle last block
+    if (i === mappedBlocks.length - 1) {
+      newText += block;
+    } else {
+      // otherwise we join with \n, except if the block is already a \n
+      if (block === "\n") newText += block;
+      else newText += block + "\n";
+    }
+  }
+
+  yamlLint
+    .lint(newText)
+    .then(() => {
+      setIsError(false);
+    })
+    .catch((error) => {
+      setIsError(true);
+      console.error("Invalid YAML file.", error);
+      setErrorMessage(error.message);
+    });
 
   return (
     <div>
@@ -40,13 +81,17 @@ export default function EditorPage() {
             <br></br>
             <Card>
               <Tabs
-                defaultActiveKey="Editor"
+                defaultActiveKey="Yaml"
                 id="uncontrolled-tab-example"
                 className="mb-3"
               >
-                <Tab eventKey="Editor" title="Editor">
+                <Tab eventKey="Editor" title="Yaml">
                   <Row className="justify-content-md-center">
                     <Col xs={10}>
+                      {isError ? (
+                        <Alert variant="danger">{errorMessage}</Alert>
+                      ) : null}
+
                       <div className="container-root">
                         <Editor
                           editorState={editorState}

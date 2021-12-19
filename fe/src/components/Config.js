@@ -21,7 +21,7 @@ async function listLanguagesApi() {
       Authorization: `Bearer ${token.access_token}`,
     },
   };
-  return fetch("/config", requestOptions).then((data) => data.json());
+  return fetch("/api/config", requestOptions).then((data) => data.json());
 }
 
 async function getVersionsApi(language) {
@@ -33,7 +33,7 @@ async function getVersionsApi(language) {
       Authorization: `Bearer ${token.access_token}`,
     },
   };
-  return fetch("/config/" + language, requestOptions).then((data) =>
+  return fetch("/api/config/" + language, requestOptions).then((data) =>
     data.json()
   );
 }
@@ -47,7 +47,7 @@ async function getConfigApi(language, version) {
       Authorization: `Bearer ${token.access_token}`,
     },
   };
-  return fetch("/config/" + language + "/" + version, requestOptions).then(
+  return fetch("/api/config/" + language + "/" + version, requestOptions).then(
     (data) => data.json()
   );
 }

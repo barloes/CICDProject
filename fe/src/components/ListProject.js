@@ -10,7 +10,7 @@ async function listProjectAPI() {
       Authorization: `Bearer ${token.access_token}`,
     },
   };
-  return fetch("/project", requestOptions).then((data) => data.json());
+  return fetch("/api/project", requestOptions).then((data) => data.json());
 }
 
 async function removeProjectAPI(ProjectName) {
@@ -24,7 +24,7 @@ async function removeProjectAPI(ProjectName) {
     body: JSON.stringify({ projectName: ProjectName }),
   };
 
-  return fetch("/project", requestOptions).then((data) => data.json());
+  return fetch("/api/project", requestOptions).then((data) => data.json());
 }
 
 export default function ListProject() {

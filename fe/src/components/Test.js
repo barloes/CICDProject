@@ -25,7 +25,7 @@ async function getAccessKey() {
     body: JSON.stringify(),
   };
 
-  return fetch("/accesskey", requestOptions).then((data) => data.json());
+  return fetch("/api/accesskey", requestOptions).then((data) => data.json());
 }
 
 export default function Test() {

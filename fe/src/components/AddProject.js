@@ -13,7 +13,7 @@ async function addProjectAPI(ProjectName, Port) {
     body: JSON.stringify({ projectName: ProjectName, port: Port }),
   };
 
-  return fetch("/project", requestOptions).then((data) => data.json());
+  return fetch("/api/project", requestOptions).then((data) => data.json());
 }
 
 export default function AddProject({ showHide, setShowHide }) {

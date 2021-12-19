@@ -14,7 +14,7 @@ import PropTypes from "prop-types";
 import "./Login.css";
 
 async function loginUserAPI(credentials) {
-  return fetch("/login", {
+  return fetch("/api/login", {
     headers: {
       "Content-Type": "application/json",
     },

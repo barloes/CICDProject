@@ -25,7 +25,7 @@ jwt = JWTManager(app)
 config = {
     "user": "root",  # change to db user
     "password": "root",  # change to db pw
-    "host": "host.docker.internal",  # change to db endpoint
+    "host": "172.17.0.1",  # change to db endpoint
     "database": "db",
     "raise_on_warnings": True,
 }

@@ -23,7 +23,7 @@ services:
     depends_on:
       - database
   frontend:
-    build: fe/.
+    image: cicdfypfe
     ports:
       - "80:80"
     volumes:

@@ -8,7 +8,7 @@ import {
   Card,
   Button,
   Tabs,
-  Tab,
+  Alert,
   Tooltip,
   OverlayTrigger,
   Table,
@@ -77,6 +77,15 @@ export default function Test() {
 
   return (
     <div>
+      <Alert variant="dark">
+        <p>
+          1.Add the following configs to the secrets of the github repository
+          following this{" "}
+          <a href="https://github.com/Azure/actions-workflow-samples/blob/master/assets/create-secrets-for-GitHub-workflows.md">
+            link
+          </a>
+        </p>
+      </Alert>
       <Row lg="auto" className="justify-content-md-center">
         <Table className="no-spacing" responsive="sm" hover bordered>
           <thead>

@@ -43,6 +43,18 @@ def authenticated(username, password):
     else:
         return False
 
+def user_existed(username):
+    query = "select username from User where username=%s"
+    data = (username,)
+    app.logger.info(f"data:{data}")
+    res = select_query(query, data)
+
+    app.logger.info(f"length: {len(res)}")
+    if len(res) == 1:
+        return True
+    else:
+        return False
+
 
 def convert_res_to_json_list(nameList, responses):
     result = list()
@@ -424,6 +436,28 @@ def login():
     username = request.json.get("username", None)
     password = request.json.get("password", None)
     if authenticated(username, password):
+        access_token = create_access_token(identity=username)
+        return jsonify(access_token=access_token)
+    else:
+        return jsonify({"msg": "Bad username or password"}), 401
+
+@app.route("/register", methods=["POST"])
+def register():
+    username = request.json.get("username", None)
+    password = request.json.get("password", None)
+
+    #check not in sql
+    if not user_existed(username):
+
+        # register acc
+        query = "insert into User where username=%s"
+        query = "INSERT INTO User (username, password) VALUES (%s, %s);"
+        data = (username,password)
+        app.logger.info(f"data:{data}")
+        res = insert_query(query, data)
+
+        app.logger.info(f"register user:{res}")
+
         access_token = create_access_token(identity=username)
         return jsonify(access_token=access_token)
     else:

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import {
   Container,
   Row,
@@ -23,13 +24,31 @@ async function loginUserAPI(credentials) {
   }).then((data) => data.json());
 }
 
+async function registerUserAPI(credentials) {
+  return fetch("/api/register", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify(credentials),
+  }).then((data) => data.json());
+}
+
 export default function Login({ setToken }) {
   const [username, setUserName] = useState();
   const [password, setPassword] = useState();
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     const token = await loginUserAPI({
+      username,
+      password,
+    });
+    if ("access_token" in token) setToken(token);
+  };
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    const token = await registerUserAPI({
       username,
       password,
     });
@@ -48,7 +67,7 @@ export default function Login({ setToken }) {
             <Row className="justify-content-md-center">
               <Col xs={8}>
                 <br></br>
-                <Form onSubmit={handleSubmit}>
+                <Form>
                   <Form.Group className="mb-3">
                     <Form.Label>Username</Form.Label>
                     <Form.Control
@@ -65,14 +84,24 @@ export default function Login({ setToken }) {
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </Form.Group>
-
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    style={{ float: "right" }}
-                  >
-                    Login
-                  </Button>
+                  <Row>
+                    <Col md={{ span: 6, offset: 7 }}>
+                      <Button
+                        variant="secondary"
+                        type="submit"
+                        onClick={handleRegister}
+                      >
+                        Register
+                      </Button>{" "}
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        onClick={handleLogin}
+                      >
+                        Login
+                      </Button>
+                    </Col>
+                  </Row>
                 </Form>
               </Col>
             </Row>

@@ -3,6 +3,7 @@ import { Button, Modal, Form, Tabs, Tab } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.css";
 import Template from "./Template";
 import Test from "./Test";
+import Template1 from "./Template1";
 
 export default function ConfigModal({
   showHide,
@@ -30,7 +31,7 @@ export default function ConfigModal({
             />
           </Tab>
           <Tab eventKey="docker" title="Docker">
-            <Template data={configData?.docker} />
+            <Template1 data={configData?.docker} />
           </Tab>
           <Tab eventKey="accesskey" title="Access Key">
             <Test />

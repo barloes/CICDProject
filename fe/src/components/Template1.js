@@ -9,7 +9,7 @@ function formatNewLine(text) {
   });
 }
 
-export default function Template({ data }) {
+export default function Template1({ data }) {
   console.log(data);
   const [isCopied, setIsCopied] = useState(false);
 
@@ -24,11 +24,9 @@ export default function Template({ data }) {
     <div>
       <Alert variant="dark">
         <p>
-          1.Create the folder ./github/workflows in the root directory of the
-          repository
+          1.Create a file "Dockerfile" in the root directory of the repository
         </p>
-        <p>2.Create a config.yml in the folder above</p>
-        <p>3.Copy the content to the config.yml file</p>
+        <p>2.Copy the content to the config.yml file</p>
       </Alert>
 
       <Card text={"dark"} className="mb-2">

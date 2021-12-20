@@ -29,9 +29,8 @@ https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_execution_IAM_r
 # Command
 
 ```
-docker-compose up -d
-docker build -t fe ./fe
-docker run -d -v $(pwd)/fe/default.conf:/etc/nginx/conf.d/default.conf -p 80:80 fe
+docker-compose -f docker-compose.local.yml up
+cd fe && npm run start
 ```
 
 ```

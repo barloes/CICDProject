@@ -23,7 +23,7 @@ services:
     depends_on:
       - database
   frontend:
-    image: cicdfypfe
+    image: 642151248908.dkr.ecr.ap-southeast-1.amazonaws.com/junhuiimage:cicdfypfe
     ports:
       - "80:80"
     volumes:

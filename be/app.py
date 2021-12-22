@@ -74,12 +74,12 @@ def create_fargate(
     cpu = 256
     memory = 512
 
-    response = boto3.client("ecs").create_cluster(
+    response = boto3.client("ecs",region_name='ap-southeast-1').create_cluster(
         clusterName=projectName,
     )
     app.logger.info(response)
 
-    response = boto3.client("ecs").register_task_definition(
+    response = boto3.client("ecs",region_name='ap-southeast-1').register_task_definition(
         family=projectName,
         executionRoleArn=task_exec_role_arn,
         networkMode="awsvpc",
@@ -113,7 +113,7 @@ def create_fargate(
     )
     app.logger.info(response)
 
-    response = boto3.client("ecs").create_service(
+    response = boto3.client("ecs",region_name='ap-southeast-1').create_service(
         cluster=projectName,
         serviceName=projectName,
         taskDefinition=projectName,
@@ -141,18 +141,18 @@ def create_fargate(
 
 def remove_fargate(name):
 
-    response = boto3.client("ecs").delete_service(
+    response = boto3.client("ecs",region_name='ap-southeast-1').delete_service(
         cluster=name, service=name, force=True
     )
     app.logger.info(response)
 
     time.sleep(30)
 
-    response = boto3.client("ecs").delete_cluster(cluster=name)
+    response = boto3.client("ecs",region_name='ap-southeast-1').delete_cluster(cluster=name)
     app.logger.info(response)
 
 def get_fargate_public_ip(name):
-    response = boto3.client('ecs').list_tasks(
+    response = boto3.client('ecs',region_name='ap-southeast-1').list_tasks(
         cluster=name,
         family=name,
     )
@@ -287,7 +287,7 @@ def add_project():
 
     try:
 
-        response = boto3.client("ecr").create_repository(
+        response = boto3.client("ecr",region_name='ap-southeast-1').create_repository(
             repositoryName=projectName,
             imageTagMutability="MUTABLE",
             imageScanningConfiguration={"scanOnPush": False},

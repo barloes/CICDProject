@@ -1,0 +1,11 @@
+version: "2.2"
+services:
+  frontend:
+    image: 642151248908.dkr.ecr.ap-southeast-1.amazonaws.com/junhuiimage:cicdfypfe
+    ports:
+      - "80:80"
+    volumes:
+      - ./fe/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+      - database

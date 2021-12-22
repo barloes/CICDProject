@@ -175,7 +175,7 @@ def get_fargate_public_ip(name):
     network_interface_id = next((x["value"] for x in response if x["name"] == "networkInterfaceId"), None)
     print(network_interface_id)
 
-    response = boto3.client('ec2').describe_network_interfaces(
+    response = boto3.client('ec2',region_name="ap-southeast-1").describe_network_interfaces(
         NetworkInterfaceIds=[
             network_interface_id,
         ],

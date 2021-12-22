@@ -328,7 +328,7 @@ def remove_project():
     projectName = request.json.get("projectName", None)
 
     try:
-        response = boto3.client("ecr").delete_repository(
+        response = boto3.client("ecr",region_name='ap-southeast-1').delete_repository(
             repositoryName=projectName, force=True
         )
         app.logger.info(f"Response from deleting ecr: {response}")

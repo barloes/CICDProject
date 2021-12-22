@@ -1,0 +1,33 @@
+version: "2.2"
+services:
+  database:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+  backend:
+    build: be/.
+    restart: always
+    environment:
+      FLASK_ENV: development
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./be:/app
+      - ~/.aws:/root/.aws
+    depends_on:
+      - database
+  frontend:
+    image: 642151248908.dkr.ecr.ap-southeast-1.amazonaws.com/junhuiimage:cicdfypfe
+    ports:
+      - "80:80"
+    volumes:
+      - ./fe/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+      - database

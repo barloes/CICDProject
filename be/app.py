@@ -163,7 +163,7 @@ def get_fargate_public_ip(name):
     task_arn = response['taskArns'][0]
     app.logger.info(response)
 
-    response = boto3.client('ecs').describe_tasks(
+    response = boto3.client('ecs',region_name='ap-southeast-1').describe_tasks(
         cluster=name,
         tasks=[
             task_arn,

@@ -24,8 +24,8 @@ Create TABLE Config (
     PRIMARY KEY (language,version)
 );
 
-INSERT INTO User (username, password)
-VALUES ('junhui123', 'notjunhui123');
+-- INSERT INTO User (username, password)
+-- VALUES ('junhui123', 'notjunhui123');
 
 insert into
    Config (language, version, docker, config) 

@@ -29,7 +29,7 @@ https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_execution_IAM_r
 # Command
 
 ```
-docker-compose -f docker-compose.be.yml up
+docker-compose -f docker-compose.local.yml up
 cd fe && npm run start
 ```
 

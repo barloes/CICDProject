@@ -34,18 +34,17 @@ cd fe && npm run start
 ```
 
 ```
+--- 
+after_success: 
+  - "mvn clean cobertura:cobertura"
+  - "mvn test"
+ jdk: 
+  - openjdk7
+  - oraclejdk7
 language: java
+notifications: 
+  email: 
+    recipients: 
+      - mymail@gmail.com
 
- jdk:
-    - openjdk7
-    - oraclejdk7
-
-after_success:
-   - mvn clean cobertura:cobertura
-   - mvn test
-
-notifications:
-   email:
-       recipients:
-          - mymail@gmail.com
 ```

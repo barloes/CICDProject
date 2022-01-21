@@ -362,6 +362,29 @@ def list_language():
         app.logger.exception(e)
         return jsonify({"msg": "Bad Request","exception": e,"status": 401})
 
+# get language
+@app.route("/config", methods=["POST"])
+@jwt_required()
+def create_language():
+    language = request.json.get("language", None)
+    version = request.json.get("version", None)
+    docker_config = request.json.get("config", None)
+    try:
+        app.logger.info(language)
+        app.logger.info(version)
+        app.logger.info(config)
+
+        github_config = """'python', '3.8', 'FROM python:3.8-slim-buster \n \nWORKDIR /app \nCOPY . /app \nRUN pip3 install -r requirements.txt \n \nCMD [ "python3","app.py" ]', 'on: push \n \njobs: \n  deploy: \n    name: Deploy \n    runs-on: ubuntu-latest \n   \n    steps: \n    - name: Check out code \n      uses: actions/checkout@v2 \n \n    - name: Configure AWS credentials \n      uses: aws-actions/configure-aws-credentials@v1 \n      with: \n        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} \n        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} \n        aws-region: ap-southeast-1 \n \n    - name: Login to Amazon ECR \n      id: login-ecr \n      uses: aws-actions/amazon-ecr-login@v1 \n \n    - name: Build, tag, and push image to Amazon ECR \n      env: \n        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }} \n        ECR_REPOSITORY: ${{PROJECT_NAME}} \n        IMAGE_TAG: latest \n      run: | \n        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG . \n        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \n \n    - name: update fargate service with latest image AWS CLI \n      env: \n        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }} \n        SERVICE: ${{PROJECT_NAME}} \n      run: | \n        aws ecs update-service --cluster $SERVICE --service $SERVICE --task-definition $SERVICE --force-new-deployment'"""
+        query = "INSERT INTO Config (language, version, docker, config) VALUES (%s, %s, %s, %s);"
+        data = (language,version,docker_config,github_config)
+        responses = insert_query(query, data)
+
+        return Response(status=200)
+    except Exception as e:
+        app.logger.exception(e)
+        return jsonify({"msg": "Bad Request","exception": e,"status": 401})
+
+
 # get version
 @app.route("/config/<string:language>", methods=["GET"])
 @jwt_required()

@@ -52,6 +52,21 @@ async function getConfigApi(language, version) {
   );
 }
 
+async function postConfigApi(credentials) {
+  let token = JSON.parse(sessionStorage.getItem("token"));
+  console.log(credentials);
+
+  const requestOptions = {
+    method: "POST",
+    body: JSON.stringify(credentials),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token.access_token}`,
+    },
+  };
+  return fetch("/api/config", requestOptions).then((data) => data.json());
+}
+
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -62,6 +77,10 @@ export default function Config() {
 
   const [curLanguage, setCurLanguage] = useState("python");
   const [curVersion, setCurVersion] = useState();
+
+  const [ConfigLanguage, setConfigLanguage] = useState();
+  const [ConfigVersion, setConfigVersion] = useState();
+  const [ConfigDocker, setConfigDocker] = useState();
 
   const [showHide, setShowHide] = useState(false);
   const [configData, setConfigData] = useState();
@@ -100,6 +119,20 @@ export default function Config() {
     });
     //need pass data down to the child component
     setShowHide(!showHide);
+  };
+
+  const handleAddConfig = async (e) => {
+    console.log(ConfigLanguage);
+    console.log(ConfigVersion);
+    console.log(ConfigDocker);
+
+    const res = await postConfigApi({
+      language: ConfigLanguage,
+      version: ConfigVersion,
+      config: ConfigDocker,
+    });
+
+    console.log(res);
   };
 
   return (
@@ -169,6 +202,46 @@ export default function Config() {
                           configData={configData}
                           projectName={projectName}
                         />
+                      </Form>
+                    </Col>
+                  </Row>
+                </Tab>
+                <Tab eventKey="addConfig" title="Add Config">
+                  <br></br>
+
+                  <Row className="justify-content-md-center">
+                    <Col xs={8}>
+                      <Form onSubmit={handleAddConfig}>
+                        <Form.Group controlId="formBasicSelect">
+                          <Form.Label>Language</Form.Label>
+                          <Form.Control
+                            onChange={(e) => setConfigLanguage(e.target.value)}
+                            placeholder="Enter Language"
+                          />
+
+                          <br></br>
+                          <Form.Label>Version</Form.Label>
+                          <Form.Control
+                            onChange={(e) => setConfigVersion(e.target.value)}
+                            placeholder="Enter Version"
+                          />
+                          <br></br>
+                          <Form.Label>Docker Config</Form.Label>
+                          <Form.Control
+                            as="textarea"
+                            rows={5}
+                            onChange={(e) => setConfigDocker(e.target.value)}
+                            placeholder="Enter Docker Config"
+                          />
+                        </Form.Group>
+                        <br></br>
+                        <Button
+                          variant="primary"
+                          type="submit"
+                          style={{ float: "right" }}
+                        >
+                          Add
+                        </Button>
                       </Form>
                     </Col>
                   </Row>

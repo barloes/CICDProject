@@ -63,7 +63,7 @@ export default function EditorPage() {
   }
 
   yamlLint
-    .lint(newText.replace("\n\x00",""))
+    .lint(newText)
     .then(() => {
       setIsError(false);
     })

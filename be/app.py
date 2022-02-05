@@ -211,7 +211,6 @@ def get_access_key():
         responses = select_query(query, data)
         if responses == [(None, None)]:
             # create user and get accessId and get accessSecret
-            app.logger.info("hi")
 
             response = boto3.client("iam").create_user(
                 Path="/cicd/",
@@ -308,8 +307,8 @@ def add_project():
 
         # declare var
         ecr_uri = f"{response['repository']['repositoryUri']}:latest"
-        subnet_id = "subnet-0e78adbc6480978e1"
-        security_group_id = "sg-0c5c6c0e46f5cef36"
+        subnet_id = "subnet-0024568afd67f42c0"
+        security_group_id = "sg-0def7b112e8c5e6e8"
         task_exec_role_arn = "arn:aws:iam::642151248908:role/ecs_task"
 
         create_fargate(

@@ -34,17 +34,23 @@ cd fe && npm run start
 ```
 
 ```
---- 
-after_success: 
+---
+after_success:
   - "mvn clean cobertura:cobertura"
   - "mvn test"
- jdk: 
+ jdk:
   - openjdk7
   - oraclejdk7
 language: java
-notifications: 
-  email: 
-    recipients: 
+notifications:
+  email:
+    recipients:
       - mymail@gmail.com
 
 ```
+
+# download docker-compose
+
+sudo curl -L "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo mv /usr/local/bin/docker-compose /usr/bin/docker-compose
+sudo chmod +x /usr/bin/docker-compose

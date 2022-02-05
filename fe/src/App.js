@@ -22,7 +22,7 @@ function App() {
       <div className="wrapper" style={{ fontFamily: "Arial" }}>
         <NavbarComponent />
 
-        <Switch>
+      <Switch>
           <Route path="/config">
             <Config />
           </Route>
